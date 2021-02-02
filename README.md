@@ -8,21 +8,20 @@ Given the existing solution, refactor and tidy the code to what you believe woul
 
 During the interview, you will be asked to take us through your changes and maybe do some live coding on the spot.
 
-If there are things you do not get to implement because of complexity or time shortage, mention them in your PR so we know you thought about it.
+If there are things you do not get to implement because of complexiy or time shortage, mention them in your PR so we know you thought about it.
 
 When you make a PR, write down changes you did with a small explanation why.
 
 ## Run the code
 
 To get started:
-
 - clone
 - `yarn install`
 - `yarn start`
 
 To run the tests:
-
 - `yarn run test`
+
 
 # How to submit
 
@@ -30,19 +29,19 @@ To run the tests:
 
 2. Make a PR to your forked repo with your changes (make sure you make PR on your forked repo and not on this one - by default github will choose this repo as destination for PR)
 
-3. If you chose to do public repo, send us link to the PR in your forked repo. If you choose to make private repo, add `davidmilo`, `jacobjuul` and `kristiandupont` as collaborators and send us link to it. (We prefer public repo's so it can be send internally to other front-enders fro review.)
+3. If you chose to do public repo, send us link to the PR in your forked repo. If you choose to make private repo, add `davidmilo`, `jacobjuul` and `kristiandupont` as collaborators and send us link to it. (We prefer public repos so it can be send internally to other front-enders fro review.)
+
 
 # Tips
 
 ## DON'T
 
-- Do not rewrite code to TypeScript. Purpose of this exercise is not to see if you can rewrite code to TypeScript.
-- Do not overcomplicated the solution - real seniority comes from making complex problems simple.
+- Do not rewrite code to TypeScript. Purpose of this excercise is not to see if you can rewrite code to TypeScript.
+- Do not overcomplicate the solution - real seniority comes from making complex problems simple.
 
 ## DO
 
 We like:
-
 - clean code
 - easy to read code
 - easy to change code
