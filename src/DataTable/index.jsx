@@ -1,91 +1,76 @@
-import React, { useState, useCallback } from 'react'
-import { Search } from './Search'
-import { Table } from './Table'
-import { Pagination } from './Pagination'
+import React from 'react'
 
-export const calculateTotalNumberOfPages = ({ rows, rowsPerPage }) => {
-  if (!rows || !rowsPerPage) return 0
-  return Math.ceil(rows.length / Number(rowsPerPage))
+import Pagination from './Pagination'
+import Row from './Row'
+import Search from './Search'
+
+class DataTable extends React.Component {
+  state = {
+    rows: this.props.rows,
+    currentPageNumber: 0,
+    totalNumberOfPages: this.calculateTotalNumberOfPages(this.props.rows)
+  }
+
+  static defaultProps = {
+    rowsPerPage: 40
+  }
+
+  calculateTotalNumberOfPages(rows) {
+    const { rowsPerPage } = this.props
+    if (rowsPerPage == 0) return 0
+    return Math.ceil(rows.length / rowsPerPage)
+  }
+
+  search(event) {
+    const { rows } = this.props
+    const text = event.target.value
+    let rowsFound = rows
+
+    if (text) {
+      rowsFound = rows.filter((row) => {
+        return row.name1.toLowerCase().search(text.toLowerCase()) > -1 ||
+         (row.email && row.email.toLowerCase().search(text.toLowerCase()) > -1)
+      })
+    }
+
+    this.setState({
+      rows: rowsFound,
+      currentPageNumber: 0,
+      totalNumberOfPages: this.calculateTotalNumberOfPages(rowsFound)
+    })
+  }
+
+  changeToPageNumber(pageNumber) {
+    this.setState({ currentPageNumber: pageNumber })
+  }
+
+  rowsInPageNumber(pageNumber) {
+    const { rowsPerPage } = this.props
+    const startIndex = pageNumber * rowsPerPage
+    return [startIndex, startIndex + rowsPerPage]
+  }
+
+  render() {
+    const { rows, currentPageNumber, totalNumberOfPages } = this.state
+    const rowsToRender = rows
+      .map(row => <Row key={row.per_id} row={row} />)
+      .slice(...this.rowsInPageNumber(currentPageNumber))
+
+    return(
+      <div>
+        <Search onSearch={this.search.bind(this)} />
+        <table>
+          <tbody>
+            { rowsToRender }
+          </tbody>
+        </table>
+        <Pagination
+          currentPageNumber={currentPageNumber}
+          totalNumberOfPages={totalNumberOfPages}
+          onChange={this.changeToPageNumber.bind(this)} />
+      </div>
+    )
+  }
 }
 
-export const rowsInPageNumber = ({ rowsPerPage, currentPageNumber }) => {
-  const startIndex = currentPageNumber * rowsPerPage
-  return [startIndex, startIndex + rowsPerPage]
-}
-
-// NOTE: Add optional chaining operator in stage 4 for more syntax sugar: https://github.com/tc39/proposal-optional-chaining
-export const sliceToRowPerPage = ({
-  dataRows,
-  rowsPerPage,
-  currentPageNumber,
-}) =>
-  dataRows &&
-  dataRows.slice(...rowsInPageNumber({ rowsPerPage, currentPageNumber }))
-
-export const filterRows = ({ row, text }) =>
-  row.name1.toLowerCase().search(text.toLowerCase()) > -1 ||
-  (row.email && row.email.toLowerCase().search(text.toLowerCase()) > -1)
-
-export const search = ({
-  event,
-  rows,
-  rowsPerPage,
-  setDataRows,
-  setCurrentPageNumber,
-  setTotalNumberOfPages,
-}) => {
-  const text = event.target.value
-  const foundRows = !text ? rows : rows.filter(row => filterRows({ row, text }))
-  setDataRows(foundRows)
-  setCurrentPageNumber(0)
-  setTotalNumberOfPages(
-    calculateTotalNumberOfPages({ rows: foundRows, rowsPerPage }),
-  )
-}
-
-export const DataTable = ({ rows = [], rowsPerPage = 40 }) => {
-  const [dataRows, setDataRows] = useState(rows)
-  const [currentPageNumber, setCurrentPageNumber] = useState(0)
-  const [totalNumberOfPages, setTotalNumberOfPages] = useState(
-    calculateTotalNumberOfPages({ rows, rowsPerPage }),
-  )
-
-  // Limit the amount of initial rows to render
-  const rowsToRender = sliceToRowPerPage({
-    dataRows,
-    rowsPerPage,
-    currentPageNumber,
-  })
-
-  // Create search function with state functions
-  const searchFunction = useCallback(
-    event =>
-      search({
-        event,
-        rows,
-        rowsPerPage,
-        setDataRows,
-        setCurrentPageNumber,
-        setTotalNumberOfPages,
-      }),
-    [
-      rows,
-      rowsPerPage,
-      setDataRows,
-      setCurrentPageNumber,
-      setTotalNumberOfPages,
-    ],
-  )
-
-  return (
-    <>
-      <Search onSearch={searchFunction} />
-      <Table rowsToRender={rowsToRender} />
-      <Pagination
-        currentPageNumber={currentPageNumber}
-        totalNumberOfPages={totalNumberOfPages}
-        onChange={setCurrentPageNumber}
-      />
-    </>
-  )
-}
+export default DataTable
