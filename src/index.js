@@ -1,5 +1,6 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import { App } from './App'
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
 
-ReactDOM.render(<App />, document.getElementById('root'))
+var userData = JSON.parse(document.getElementById('user-data').dataset.users);
+ReactDOM.render(<App rows={userData} />, document.getElementById('root'));
